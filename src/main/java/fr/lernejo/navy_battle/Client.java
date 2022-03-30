@@ -27,25 +27,17 @@ public class Client {
     // private final Start start;
 
     public Client(int port, String serverURL) throws IOException {
-        // server.setExecutor(Executors.newSingleThreadExecutor());
 
-        client = HttpClient.newBuilder()
-                                .version(HttpClient.Version.HTTP_2)
-                                .build();
-
-
+        client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).build();
         HttpRequest requetePost = HttpRequest.newBuilder()
                                     .uri(URI.create(serverURL + "/api/game/start"))
                                     .setHeader("Accept", "application/json")
                                     .setHeader("Content-Type", "application/json")
                                     .POST(BodyPublishers.ofString("{\"id\":\"1\", \"url\":\"http://localhost:" + port + "\", \"message\":\"hello\"}"))
                                     .build();
-    
         client.sendAsync(requetePost, HttpResponse.BodyHandlers.ofString());
-
         server = HttpServer.create(new InetSocketAddress(port), 0);
         server.setExecutor(Executors.newFixedThreadPool(1));
-    
         fire = new Fire();
         server.createContext("/fire", fire);
         server.start();
